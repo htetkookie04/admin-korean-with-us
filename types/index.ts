@@ -139,6 +139,7 @@ export interface DashboardMetrics {
     daily: Array<{ date: string; count: number }>;
     weekly: Array<{ week: string; count: number }>;
     monthly: Array<{ month: string; count: number }>;
+    yearly: Array<{ year: string; count: number }>;
   };
   popularCourse: {
     courseId: string;
