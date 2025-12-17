@@ -357,10 +357,14 @@ export const mockDashboardMetrics: DashboardMetrics = {
       { date: '2024-12-17', count: 2 },
     ],
     weekly: [
-      { week: 'Week 1', count: 15 },
-      { week: 'Week 2', count: 22 },
-      { week: 'Week 3', count: 18 },
-      { week: 'Week 4', count: 27 },
+      { week: 'Nov W1', count: 15 },
+      { week: 'Nov W2', count: 22 },
+      { week: 'Nov W3', count: 18 },
+      { week: 'Nov W4', count: 27 },
+      { week: 'Dec W1', count: 24 },
+      { week: 'Dec W2', count: 31 },
+      { week: 'Dec W3', count: 19 },
+      { week: 'Dec W4', count: 28 },
     ],
     monthly: [
       { month: 'Jan 2023', count: 28 },
