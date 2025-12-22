@@ -36,7 +36,6 @@ A comprehensive, frontend-only admin dashboard for managing a Korean language sc
 ### 📧 Contact / Inquiry Management
 - Handle contact form messages and enrollment inquiries
 - Mark inquiries as "pending", "replied", or "closed"
-- AI-generated reply suggestions
 - Reply management interface
 
 ### 📅 Timetable Management
@@ -65,13 +64,6 @@ A comprehensive, frontend-only admin dashboard for managing a Korean language sc
 - Password policy settings
 - Session management
 - IP whitelist configuration
-
-### 🤖 AI Assistant (Advanced Feature)
-- Integrated AI assistant in the dashboard
-- Chat interface for getting help and insights
-- Automated email suggestions for inactive students
-- Report generation assistance
-- Data insights and recommendations
 
 ## Tech Stack
 
@@ -127,7 +119,6 @@ admin-korean-with-us/
 │   ├── content/            # Content management
 │   ├── settings/           # Website settings
 │   ├── security/           # Security and access control
-│   ├── ai-assistant/       # AI assistant
 │   ├── layout.tsx          # Root layout
 │   └── page.tsx            # Home page (redirects to dashboard)
 ├── components/
@@ -203,7 +194,6 @@ The project uses Tailwind CSS for styling. You can customize:
 - File upload functionality
 - Email notifications
 - Multi-language support for admin panel
-- Advanced AI features
 - Real-time updates
 - Advanced reporting
 

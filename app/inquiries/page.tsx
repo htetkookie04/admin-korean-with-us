@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { mockInquiries } from '@/lib/mockData';
-import { Search, MessageSquare, CheckCircle, XCircle, Bot, Send } from 'lucide-react';
+import { Search, MessageSquare, CheckCircle, XCircle, Send } from 'lucide-react';
 import { formatDateTime } from '@/lib/utils';
 import { Inquiry, InquiryStatus } from '@/types';
 
@@ -13,7 +13,6 @@ export default function InquiriesPage() {
   const [statusFilter, setStatusFilter] = useState<InquiryStatus | 'all'>('all');
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [showReplyModal, setShowReplyModal] = useState(false);
-  const [aiSuggestion, setAiSuggestion] = useState('');
 
   const filteredInquiries = inquiries.filter(inquiry => {
     const matchesSearch = 
@@ -33,8 +32,6 @@ export default function InquiriesPage() {
   const handleReply = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
     setShowReplyModal(true);
-    // Mock AI suggestion
-    setAiSuggestion(`Thank you for your inquiry about "${inquiry.subject}". We appreciate your interest and will get back to you shortly with detailed information.`);
   };
 
   const getStatusBadge = (status: InquiryStatus) => {
@@ -156,33 +153,7 @@ export default function InquiriesPage() {
               </div>
 
               <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">Reply Message</label>
-                  <button
-                    onClick={() => {
-                      // Mock AI suggestion
-                      setAiSuggestion(`Thank you for your inquiry about "${selectedInquiry.subject}". We appreciate your interest and will get back to you shortly with detailed information.`);
-                    }}
-                    className="flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700"
-                  >
-                    <Bot className="w-4 h-4" />
-                    AI Suggestion
-                  </button>
-                </div>
-                {aiSuggestion && (
-                  <div className="mb-2 p-3 bg-brand-50 border border-brand-200 rounded-lg">
-                    <p className="text-sm text-gray-700 mb-2">{aiSuggestion}</p>
-                    <button
-                      onClick={() => {
-                        const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-                        if (textarea) textarea.value = aiSuggestion;
-                      }}
-                      className="text-xs text-brand-600 hover:text-brand-700"
-                    >
-                      Use this suggestion
-                    </button>
-                  </div>
-                )}
+                <label className="block text-sm font-medium text-gray-700 mb-2">Reply Message</label>
                 <textarea
                   rows={6}
                   placeholder="Type your reply here..."
@@ -195,7 +166,6 @@ export default function InquiriesPage() {
                   onClick={() => {
                     setShowReplyModal(false);
                     setSelectedInquiry(null);
-                    setAiSuggestion('');
                   }}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
@@ -206,7 +176,6 @@ export default function InquiriesPage() {
                     handleStatusChange(selectedInquiry.id, 'replied');
                     setShowReplyModal(false);
                     setSelectedInquiry(null);
-                    setAiSuggestion('');
                   }}
                   className="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
                 >

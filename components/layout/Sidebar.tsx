@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -13,28 +14,69 @@ import {
   Image as ImageIcon,
   Settings,
   Shield,
-  Bot,
   Bell,
   Globe,
+  Video,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const menuItems = [
+// Admin menu items
+const adminMenuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/users', label: 'User Management', icon: Users },
   { href: '/courses', label: 'Course Management', icon: BookOpen },
+  { href: '/teacher/lectures', label: 'Lectures', icon: Video },
   { href: '/enrollments', label: 'Enrollments', icon: UserCheck },
+  { href: '/notices', label: 'Notices', icon: Bell },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/inquiries', label: 'Inquiries', icon: Mail },
   { href: '/timetable', label: 'Timetable', icon: Calendar },
   { href: '/content', label: 'Content', icon: ImageIcon },
   { href: '/settings', label: 'Website Settings', icon: Settings },
   { href: '/security', label: 'Security', icon: Shield },
-  { href: '/ai-assistant', label: 'AI Assistant', icon: Bot },
+];
+
+// Teacher menu items (no dashboard access)
+const teacherMenuItems = [
+  { href: '/teacher/lectures', label: 'Lectures', icon: Video },
+  { href: '/notices', label: 'Notices', icon: Bell },
+  { href: '/timetable', label: 'Timetable', icon: Calendar },
+];
+
+// Student menu items (view only)
+const studentMenuItems = [
+  { href: '/student/lectures', label: 'My Courses', icon: BookOpen },
+  { href: '/notices', label: 'Notices', icon: Bell },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [userRole, setUserRole] = useState<string>('Admin');
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setUserRole(user.role || 'Admin');
+      } catch {
+        // Default to Admin if parsing fails
+      }
+    }
+  }, []);
+
+  // Get menu items based on role
+  const getMenuItems = () => {
+    switch (userRole) {
+      case 'Teacher':
+        return teacherMenuItems;
+      case 'Student':
+        return studentMenuItems;
+      default:
+        return adminMenuItems;
+    }
+  };
+  const menuItems = getMenuItems();
 
   return (
     <div className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-200 p-6 overflow-y-auto shadow-sm">
@@ -48,7 +90,9 @@ export default function Sidebar() {
         </div>
         <div>
           <h1 className="text-lg font-bold text-gray-900">Korean With Us</h1>
-          <p className="text-xs text-gray-500">Admin Dashboard</p>
+          <p className="text-xs text-gray-500">
+            {userRole === 'Teacher' ? 'Teacher Portal' : userRole === 'Student' ? 'Student Portal' : 'Admin Dashboard'}
+          </p>
         </div>
       </div>
       

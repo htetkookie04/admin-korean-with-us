@@ -9,7 +9,6 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,16 +23,21 @@ export default function LoginPage() {
       
       if (result.success && result.user) {
         // Store auth info
-        if (rememberMe) {
-          localStorage.setItem('rememberMe', 'true');
-        }
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('userEmail', result.user.email);
         localStorage.setItem('userName', result.user.name);
         localStorage.setItem('userRole', result.user.role);
+        // Store complete user object for role-based features
+        localStorage.setItem('user', JSON.stringify(result.user));
         
-        // Redirect to dashboard
-        router.push('/dashboard');
+        // Redirect based on role
+        if (result.user.role === 'Teacher') {
+          router.push('/teacher/lectures');
+        } else if (result.user.role === 'Student') {
+          router.push('/student/lectures');
+        } else {
+          router.push('/dashboard');
+        }
       } else {
         setError(result.error || 'Invalid email or password');
         setIsLoading(false);
@@ -115,20 +119,6 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
-            </div>
-
-            {/* Remember Me */}
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                Remember me
-              </label>
             </div>
 
             {/* Error Message */}
