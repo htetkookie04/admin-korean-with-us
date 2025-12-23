@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { mockEnrollments } from '@/lib/mockData';
-import { Check, X, Download, Filter, Search } from 'lucide-react';
+import { Check, X, Download, Filter, Search, Save } from 'lucide-react';
 import { formatDate, formatCurrency } from '@/lib/utils';
-import { Enrollment, EnrollmentStatus } from '@/types';
+import { Enrollment, EnrollmentStatus, PaymentStatus } from '@/types';
 
 export default function EnrollmentsPage() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>(mockEnrollments);
@@ -15,6 +15,8 @@ export default function EnrollmentsPage() {
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
+  const [editingStatus, setEditingStatus] = useState<EnrollmentStatus | null>(null);
+  const [editingPaymentStatus, setEditingPaymentStatus] = useState<PaymentStatus | null>(null);
   
   // More filters state
   const [moreFilters, setMoreFilters] = useState({
@@ -58,12 +60,53 @@ export default function EnrollmentsPage() {
     ));
   };
 
+  const handleOpenDetails = (enrollment: Enrollment) => {
+    setSelectedEnrollment(enrollment);
+    setEditingStatus(enrollment.status);
+    setEditingPaymentStatus(enrollment.paymentStatus);
+    setShowDetails(true);
+  };
+
+  const handleCancelEdit = () => {
+    if (selectedEnrollment) {
+      setEditingStatus(selectedEnrollment.status);
+      setEditingPaymentStatus(selectedEnrollment.paymentStatus);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    if (selectedEnrollment && editingStatus !== null && editingPaymentStatus !== null) {
+      setEnrollments(enrollments.map(e => 
+        e.id === selectedEnrollment.id 
+          ? { ...e, status: editingStatus, paymentStatus: editingPaymentStatus }
+          : e
+      ));
+      setSelectedEnrollment({
+        ...selectedEnrollment,
+        status: editingStatus,
+        paymentStatus: editingPaymentStatus,
+      });
+      setShowDetails(false);
+    }
+  };
+
   const getStatusBadge = (status: EnrollmentStatus) => {
     const colors: Record<EnrollmentStatus, string> = {
       'pending': 'bg-yellow-100 text-yellow-800',
       'approved': 'bg-green-100 text-green-800',
       'rejected': 'bg-red-100 text-red-800',
       'completed': 'bg-brand-100 text-brand-800',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  const getPaymentStatusBadge = (status: PaymentStatus) => {
+    const colors: Record<PaymentStatus, string> = {
+      'pending': 'bg-yellow-100 text-yellow-800',
+      'paid': 'bg-green-100 text-green-800',
+      'partial': 'bg-blue-100 text-blue-800',
+      'overdue': 'bg-red-100 text-red-800',
+      'refunded': 'bg-purple-100 text-purple-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -223,6 +266,7 @@ export default function EnrollmentsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enrolled Date</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -242,39 +286,21 @@ export default function EnrollmentsPage() {
                         {enrollment.status}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getPaymentStatusBadge(enrollment.paymentStatus)}`}>
+                        {enrollment.paymentStatus}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(enrollment.enrolledAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center gap-2">
-                        {enrollment.status === 'pending' && (
-                          <>
-                            <button
-                              onClick={() => handleApprove(enrollment.id)}
-                              className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
-                            >
-                              <Check className="w-4 h-4" />
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleReject(enrollment.id)}
-                              className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                            >
-                              <X className="w-4 h-4" />
-                              Reject
-                            </button>
-                          </>
-                        )}
-                        <button 
-                          onClick={() => {
-                            setSelectedEnrollment(enrollment);
-                            setShowDetails(true);
-                          }}
-                          className="text-brand-600 hover:text-brand-900"
-                        >
-                          View Details
-                        </button>
-                      </div>
+                      <button 
+                        onClick={() => handleOpenDetails(enrollment)}
+                        className="text-brand-600 hover:text-brand-900"
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -310,7 +336,10 @@ export default function EnrollmentsPage() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Enrollment Details</h2>
                 <button
-                  onClick={() => setShowDetails(false)}
+                  onClick={() => {
+                    handleCancelEdit();
+                    setShowDetails(false);
+                  }}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <X className="w-6 h-6" />
@@ -369,14 +398,35 @@ export default function EnrollmentsPage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-gray-500">Status</p>
-                      <span className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(selectedEnrollment.status)}`}>
-                        {selectedEnrollment.status}
-                      </span>
+                      <p className="text-xs text-gray-500 mb-2">Status</p>
+                      <select
+                        value={editingStatus || selectedEnrollment.status}
+                        onChange={(e) => setEditingStatus(e.target.value as EnrollmentStatus)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-white"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">Payment Status</p>
+                      <select
+                        value={editingPaymentStatus || selectedEnrollment.paymentStatus}
+                        onChange={(e) => setEditingPaymentStatus(e.target.value as PaymentStatus)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-white"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="partial">Partial</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="refunded">Refunded</option>
+                      </select>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Enrolled Date</p>
-                      <p className="text-sm font-medium text-gray-900">{formatDate(selectedEnrollment.enrolledAt)}</p>
+                      <p className="text-sm font-medium text-gray-900 mt-1">{formatDate(selectedEnrollment.enrolledAt)}</p>
                     </div>
                   </div>
                 </div>
@@ -384,35 +434,21 @@ export default function EnrollmentsPage() {
 
               {/* Actions */}
               <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
-                {selectedEnrollment.status === 'pending' && (
-                  <>
-                    <button
-                      onClick={() => {
-                        handleApprove(selectedEnrollment.id);
-                        setShowDetails(false);
-                      }}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                    >
-                      <Check className="w-4 h-4" />
-                      Approve Enrollment
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleReject(selectedEnrollment.id);
-                        setShowDetails(false);
-                      }}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                      Reject Enrollment
-                    </button>
-                  </>
-                )}
                 <button
-                  onClick={() => setShowDetails(false)}
-                  className={`${selectedEnrollment.status === 'pending' ? '' : 'flex-1'} px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors`}
+                  onClick={() => {
+                    handleCancelEdit();
+                    setShowDetails(false);
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Close
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveChanges}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
+                >
+                  <Save className="w-4 h-4" />
+                  Save Changes
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 export type UserRole = 'Admin' | 'Student' | 'Teacher';
 export type UserType = 'student' | 'teacher' | 'admin_staff';
 export type EnrollmentStatus = 'pending' | 'approved' | 'rejected' | 'completed';
+export type PaymentStatus = 'pending' | 'paid' | 'partial' | 'overdue' | 'refunded';
 export type InquiryStatus = 'pending' | 'replied' | 'closed';
 export type CourseLevel = 'Beginner' | 'Intermediate' | 'Speaking' | 'TOPIK';
 
@@ -50,6 +51,7 @@ export interface Enrollment {
   courseId: string;
   courseName: string;
   status: EnrollmentStatus;
+  paymentStatus: PaymentStatus;
   progress: number;
   enrolledAt: string;
   completedAt?: string;
