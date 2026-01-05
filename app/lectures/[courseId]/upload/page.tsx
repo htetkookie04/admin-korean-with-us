@@ -16,13 +16,25 @@ import {
   X,
   Loader2,
   CheckCircle,
-  BookOpen
+  BookOpen,
+  Link as LinkIcon
 } from 'lucide-react';
 
 // Validation schema
 const uploadLectureSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
   description: z.string().max(2000, 'Description must be less than 2000 characters').optional(),
+  zoomLink: z.string().refine((val) => {
+    if (!val || val.trim() === '') return true;
+    try {
+      new URL(val);
+      return true;
+    } catch {
+      return false;
+    }
+  }, {
+    message: 'Please enter a valid URL',
+  }).optional(),
 });
 
 type UploadLectureFormData = z.infer<typeof uploadLectureSchema>;
@@ -62,6 +74,7 @@ function UploadLectureContent() {
     defaultValues: {
       title: '',
       description: '',
+      zoomLink: '',
     },
   });
 
@@ -295,6 +308,32 @@ function UploadLectureContent() {
                 {errors.description && (
                   <p className="mt-2 text-sm text-red-500">{errors.description.message}</p>
                 )}
+              </div>
+
+              {/* Zoom Link Field */}
+              <div>
+                <label htmlFor="zoomLink" className="block text-sm font-medium text-gray-700 mb-2">
+                  Zoom Link
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <LinkIcon className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <input
+                    {...register('zoomLink')}
+                    type="url"
+                    id="zoomLink"
+                    placeholder="https://zoom.us/j/..."
+                    disabled={isUploading}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-all"
+                  />
+                </div>
+                {errors.zoomLink && (
+                  <p className="mt-2 text-sm text-red-500">{errors.zoomLink.message}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Enter the Zoom meeting link for this lecture (optional)
+                </p>
               </div>
 
               {/* File Uploads */}
