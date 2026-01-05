@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { mockTimetables, mockCourses } from '@/lib/mockData';
-import { Plus, Edit, Trash2, Calendar } from 'lucide-react';
+import { Edit, Trash2, Calendar } from 'lucide-react';
 import { Timetable } from '@/types';
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -40,16 +40,6 @@ export default function TimetablePage() {
             <h1 className="text-3xl font-bold text-gray-900">Timetable Management</h1>
             <p className="text-gray-600 mt-1">Manage daily timetables, schedules, and room assignments</p>
           </div>
-          <button
-            onClick={() => {
-              setSelectedTimetable(null);
-              setShowModal(true);
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Add Schedule
-          </button>
         </div>
 
         {/* Day Selector */}

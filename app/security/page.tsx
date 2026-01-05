@@ -11,6 +11,13 @@ export default function SecurityPage() {
   const [activityLogs] = useState(mockActivityLogs);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'accounts' | 'logs' | 'settings'>('accounts');
+
+  const tabs = [
+    { id: 'accounts' as const, label: 'Admin Accounts', icon: Shield },
+    { id: 'logs' as const, label: 'Activity Logs', icon: Eye },
+    { id: 'settings' as const, label: 'Security Settings', icon: Lock },
+  ];
 
   return (
     <MainLayout>
@@ -20,7 +27,31 @@ export default function SecurityPage() {
           <p className="text-gray-600 mt-1">Manage admin accounts, passwords, and activity logs</p>
         </div>
 
-        {/* Admin Accounts */}
+        {/* Tabs Navigation */}
+        <div className="bg-white rounded-lg shadow border-b border-gray-200">
+          <div className="flex space-x-1 px-4">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
+                    activeTab === tab.id
+                      ? 'border-brand-600 text-brand-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Admin Accounts Tab */}
+        {activeTab === 'accounts' && (
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -88,8 +119,10 @@ export default function SecurityPage() {
             </table>
           </div>
         </div>
+        )}
 
-        {/* Activity Logs */}
+        {/* Activity Logs Tab */}
+        {activeTab === 'logs' && (
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -132,8 +165,10 @@ export default function SecurityPage() {
             ))}
           </div>
         </div>
+        )}
 
-        {/* Security Settings */}
+        {/* Security Settings Tab */}
+        {activeTab === 'settings' && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Lock className="w-5 h-5" />
@@ -187,6 +222,7 @@ export default function SecurityPage() {
             </button>
           </div>
         </div>
+        )}
 
         {/* Password Reset Modal */}
         {showPasswordModal && (
