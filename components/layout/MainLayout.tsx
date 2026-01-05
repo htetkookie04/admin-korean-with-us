@@ -40,11 +40,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar />
-      <div className="flex-1 ml-72">
+      <div className="flex-1 ml-72 flex flex-col overflow-hidden">
         <Header />
-        <main className="pt-16 p-6">
+        <main className="flex-1 overflow-y-auto hide-scrollbar pt-16 p-6">
           {children}
         </main>
       </div>

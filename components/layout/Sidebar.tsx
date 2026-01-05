@@ -8,7 +8,6 @@ import {
   Users,
   BookOpen,
   UserCheck,
-  BarChart3,
   Mail,
   Calendar,
   Image as ImageIcon,
@@ -29,7 +28,6 @@ const adminMenuItems = [
   { href: '/teacher/lectures', label: 'Lectures', icon: Video },
   { href: '/enrollments', label: 'Enrollments', icon: UserCheck },
   { href: '/notices', label: 'Notices', icon: Bell },
-  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/inquiries', label: 'Inquiries', icon: Mail },
   { href: '/timetable', label: 'Timetable', icon: Calendar },
   { href: '/content', label: 'Content', icon: ImageIcon },
@@ -81,7 +79,7 @@ export default function Sidebar() {
   const menuItems = getMenuItems();
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-200 p-6 overflow-y-auto shadow-sm">
+    <div className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-200 p-6 overflow-y-auto hide-scrollbar shadow-sm">
       <div className="mb-8 flex items-center gap-3">
         <div className="w-12 h-12 rounded-full overflow-hidden bg-white flex-shrink-0 shadow">
           <img

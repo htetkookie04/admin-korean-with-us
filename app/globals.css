@@ -43,22 +43,46 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+/* Hide scrollbars globally while maintaining scroll functionality */
+html {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE and Edge */
+  -ms-overflow-style: none;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #d4a574;
-  border-radius: 4px;
+html::-webkit-scrollbar {
+  /* Chrome, Safari, Opera */
+  display: none;
+  width: 0;
+  height: 0;
 }
 
-::-webkit-scrollbar-track {
-  background: #f5f1f0;
+body {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE and Edge */
+  -ms-overflow-style: none;
 }
 
-/* Firefox scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #d4a574 #f5f1f0;
+body::-webkit-scrollbar {
+  /* Chrome, Safari, Opera */
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Utility class to hide scrollbars on any element */
+.hide-scrollbar {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE and Edge */
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  /* Chrome, Safari, Opera */
+  display: none;
+  width: 0;
+  height: 0;
 }
