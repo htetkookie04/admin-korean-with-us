@@ -125,7 +125,7 @@ export default function CommonCodesPage() {
               const newItem: CommonCode = {
                 id: `item-${Date.now()}`,
                 name: data.name as string,
-                value: data.value,
+                value: 'value' in data ? data.value : undefined,
               };
               items.push(newItem);
             }
