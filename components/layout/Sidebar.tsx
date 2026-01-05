@@ -17,6 +17,7 @@ import {
   Bell,
   Globe,
   Video,
+  Code,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +33,7 @@ const adminMenuItems = [
   { href: '/inquiries', label: 'Inquiries', icon: Mail },
   { href: '/timetable', label: 'Timetable', icon: Calendar },
   { href: '/content', label: 'Content', icon: ImageIcon },
+  { href: '/common-codes', label: 'Master Codes', icon: Code },
   { href: '/settings', label: 'Website Settings', icon: Settings },
   { href: '/security', label: 'Security', icon: Shield },
 ];

@@ -21,23 +21,6 @@ export default function SettingsPage() {
         youtube: 'https://youtube.com/koreanwithus',
       },
     },
-    teachers: [
-      {
-        id: '1',
-        name: 'Jane Smith',
-        bio: 'Native Korean speaker with 10 years of teaching experience',
-        image: '/images/teacher1.jpg',
-        specialization: ['Beginner', 'Intermediate'],
-      },
-    ],
-    pricing: [
-      {
-        courseId: '1',
-        courseName: 'Korean Beginner Level 1',
-        price: 299,
-        duration: '3 months',
-      },
-    ],
     notifications: {
       emailNotifications: true,
       smsNotifications: false,
@@ -196,116 +179,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Teacher Information */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Teacher Information</h2>
-          <div className="space-y-4">
-            {settings.teachers.map((teacher, idx) => (
-              <div key={teacher.id} className="p-4 border border-gray-200 rounded-lg">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input
-                      type="text"
-                      value={teacher.name}
-                      onChange={(e) => {
-                        const newTeachers = [...settings.teachers];
-                        newTeachers[idx] = { ...newTeachers[idx], name: e.target.value };
-                        setSettings({ ...settings, teachers: newTeachers });
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                    <input
-                      type="text"
-                      value={teacher.specialization.join(', ')}
-                      onChange={(e) => {
-                        const newTeachers = [...settings.teachers];
-                        newTeachers[idx] = { ...newTeachers[idx], specialization: e.target.value.split(', ') };
-                        setSettings({ ...settings, teachers: newTeachers });
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                  <textarea
-                    rows={3}
-                    value={teacher.bio}
-                    onChange={(e) => {
-                      const newTeachers = [...settings.teachers];
-                      newTeachers[idx] = { ...newTeachers[idx], bio: e.target.value };
-                      setSettings({ ...settings, teachers: newTeachers });
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-              </div>
-            ))}
-            <button className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              + Add Teacher
-            </button>
-          </div>
-        </div>
-
-        {/* Pricing */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Course Pricing</h2>
-          <div className="space-y-4">
-            {settings.pricing.map((price, idx) => (
-              <div key={idx} className="p-4 border border-gray-200 rounded-lg">
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
-                    <input
-                      type="text"
-                      value={price.courseName}
-                      onChange={(e) => {
-                        const newPricing = [...settings.pricing];
-                        newPricing[idx] = { ...newPricing[idx], courseName: e.target.value };
-                        setSettings({ ...settings, pricing: newPricing });
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Price (USD)</label>
-                    <input
-                      type="number"
-                      value={price.price}
-                      onChange={(e) => {
-                        const newPricing = [...settings.pricing];
-                        newPricing[idx] = { ...newPricing[idx], price: Number(e.target.value) };
-                        setSettings({ ...settings, pricing: newPricing });
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                    <input
-                      type="text"
-                      value={price.duration}
-                      onChange={(e) => {
-                        const newPricing = [...settings.pricing];
-                        newPricing[idx] = { ...newPricing[idx], duration: e.target.value };
-                        setSettings({ ...settings, pricing: newPricing });
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <button className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              + Add Pricing
-            </button>
-          </div>
-        </div>
-
         {/* Notifications */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Notification Settings</h2>
@@ -352,4 +225,3 @@ export default function SettingsPage() {
     </MainLayout>
   );
 }
-

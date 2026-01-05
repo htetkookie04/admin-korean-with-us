@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { mockUsers, mockActivityLogs } from '@/lib/mockData';
+import { mockUsers, mockActivityLogs, mockEnrollments } from '@/lib/mockData';
 import { Plus, Edit, Trash2, Search, Filter, Download } from 'lucide-react';
 import { formatDateTime } from '@/lib/utils';
 import { User, ActivityLog } from '@/types';
@@ -14,12 +14,43 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showActivityLog, setShowActivityLog] = useState(false);
+  const [emailInputMode, setEmailInputMode] = useState<'select' | 'manual'>('select');
+
+  // Get unique enrolled student emails with name and phone
+  const enrolledStudentEmails = useMemo(() => {
+    const emails = mockEnrollments.map(enrollment => ({
+      email: enrollment.studentEmail,
+      name: enrollment.studentName,
+      phone: enrollment.studentPhone,
+    }));
+    // Remove duplicates based on email, keeping the first occurrence
+    const uniqueEmails = Array.from(
+      new Map(emails.map(item => [item.email, item])).values()
+    );
+    return uniqueEmails.sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
+  // Handle email selection from dropdown - auto-fill name and phone
+  const handleEmailSelect = (selectedEmail: string) => {
+    const selectedStudent = enrolledStudentEmails.find(s => s.email === selectedEmail);
+    if (selectedStudent) {
+      setFormData({
+        ...formData,
+        email: selectedStudent.email,
+        name: selectedStudent.name,
+        phone: selectedStudent.phone,
+      });
+    } else {
+      setFormData({ ...formData, email: selectedEmail });
+    }
+  };
   
   // Form state for editing
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    password: '',
     role: 'Student' as 'Admin' | 'Student' | 'Teacher',
     type: 'student' as 'student' | 'teacher' | 'admin_staff',
     status: 'active' as 'active' | 'suspended',
@@ -27,10 +58,14 @@ export default function UsersPage() {
 
   const openEditModal = (user: User) => {
     setSelectedUser(user);
+    // Check if user's email is in enrolled students list
+    const isEnrolledEmail = enrolledStudentEmails.some(s => s.email === user.email);
+    setEmailInputMode(isEnrolledEmail ? 'select' : 'manual');
     setFormData({
       name: user.name,
       email: user.email,
       phone: user.phone,
+      password: '',
       role: user.role,
       type: user.type,
       status: user.status,
@@ -40,10 +75,12 @@ export default function UsersPage() {
 
   const openCreateModal = () => {
     setSelectedUser(null);
+    setEmailInputMode('select');
     setFormData({
       name: '',
       email: '',
       phone: '',
+      password: '',
       role: 'Student',
       type: 'student',
       status: 'active',
@@ -226,12 +263,28 @@ export default function UsersPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
+                  {emailInputMode === 'select' ? (
+                    <select
+                      value={formData.email}
+                      onChange={(e) => handleEmailSelect(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    >
+                      <option value="">Select enrolled student email</option>
+                      {enrolledStudentEmails.map((student) => (
+                        <option key={student.email} value={student.email}>
+                          {student.name} ({student.email})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      placeholder="Enter email address"
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
@@ -240,6 +293,20 @@ export default function UsersPage() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password
+                    {selectedUser && <span className="text-gray-500 text-xs ml-2">(leave empty to keep current password)</span>}
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    placeholder={selectedUser ? "Enter new password" : "Enter password"}
+                    required={!selectedUser}
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
